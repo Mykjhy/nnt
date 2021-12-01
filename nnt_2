@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -11,40 +12,42 @@ class Neuron:
         
         
     def feedforward(self,inputs):
-        output = np.dot(self.weights,inputs) + self.bias
+        output = np.dot(inputs,self.weights) + self.bias
         return sigmoid(output)
-    
+
 class NeuralNetwork:
     def __init__(self):
-        weights1 = np.array([2,1])
-        bias1 = 2
-        weights2 = np.array([1,2])
-        bias2 = 0
-        weights3 = np.array([1,1])
-        bias3 = 1
+        weights1 = np.array([2 * random.random() - 1,2 * random.random() - 1])
+        bias1 = 2 * random.random() - 1
+        weights2 = np.array([2 * random.random() - 1,2 * random.random() - 1])
+        bias2 = 2 * random.random() - 1
+        weights3 = 2 * random.random() - 1
+        bias3 = 2 * random.random() - 1
+        weights4 = 2 * random.random() - 1
+        bias4 = 2 * random.random() - 1
         
         self.h1 = Neuron(weights1,bias1)
         self.h2 = Neuron(weights2,bias2)
         self.o1 = Neuron(weights3,bias3)
+        self.o2 = Neuron(weights4,bias4)
         
     def feedforward(self,x):
         out_h1 = self.h1.feedforward(x)
         out_h2 = self.h2.feedforward(x)
         
-        out_o1 = self.o1.feedforward(np.array([out_h1,out_h2]))
+        out_o1 = self.o1.feedforward(out_h1)
+        out_o2 = self.o2.feedforward(out_h2)
         
-        return out_o1
-        
-net = NeuralNetwork()
-sample_size=64
-x = np.linspace(-3,3,sample_size)
-y = x + 1
-data = np.vstack((x,y))
+        return out_o1,out_o2
 
+for i in range(10):
+    net = NeuralNetwork()
+    sample_size = 64
+    x = np.linspace(-3,3,sample_size)
+    y = x
+    data = np.c_[x,y]
 
-z = np.zeros(sample_size)
-#data = np.hstack((x,y))
-for i in range(sample_size):
-    z[i] = net.feedforward(data[:,i])
-plt.plot(x,z)    
-plt.show()
+    new_x,new_y = net.feedforward(data)
+    plt.plot(new_x,new_y)
+    plt.show()
+
